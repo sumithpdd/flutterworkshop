@@ -68,6 +68,8 @@ final List<Restaurant> restaurants = [
 
 // User
 final currentUser = User(
+  profileImageUrl: 'assets/images/user.jpg',
+  isLoggedIn: false,
   name: 'Sam',
   orders: [
     Order(
