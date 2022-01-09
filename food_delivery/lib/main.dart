@@ -1,26 +1,28 @@
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
+
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Food Delivery',
+      title: 'Foocafe Flutter workshop',
       theme: ThemeData(
         primarySwatch: Colors.green,
       ),
-      home: MyHomePage(title: 'Flutter Food delivery workshop'),
+      home: const MyHomePage(title: 'Foocafe Flutter workshops'),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
+  const MyHomePage({Key? key, required this.title}) : super(key: key);
 
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
@@ -38,7 +40,22 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+  int _counter = 1;
+  final nameController = TextEditingController();
+  String name = "";
+  void _printLatestValue() {
+    setState(() {
+      name = nameController.text;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Start listening to changes.
+    nameController.addListener(_printLatestValue);
+  }
 
   void _incrementCounter() {
     setState(() {
@@ -52,13 +69,14 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   @override
+  void dispose() {
+    // Clean up the controller when the widget is disposed.
+    nameController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
     return Scaffold(
       appBar: AppBar(
         // Here we take the value from the MyHomePage object that was created by
@@ -94,11 +112,21 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             Text('Foocafe Flutter workshop'),
             Text(
-              '😍 I love this workshop😍',
+              '😍 ${name.isEmpty ? "I" : name} love this workshop😍',
             ),
             Text(
-              '$_counter',
+              '$_counter times',
               style: Theme.of(context).textTheme.headline4,
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: TextField(
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  hintText: 'Enter your name',
+                ),
+                controller: nameController,
+              ),
             ),
           ],
         ),
@@ -106,7 +134,7 @@ class _MyHomePageState extends State<MyHomePage> {
       floatingActionButton: FloatingActionButton(
         onPressed: _incrementCounter,
         tooltip: 'Like',
-        child: Icon(Icons.favorite, color: Colors.red),
+        child: const Icon(Icons.favorite, color: Colors.red),
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
