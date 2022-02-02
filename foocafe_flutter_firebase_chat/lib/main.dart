@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'helpers/app_constants.dart';
+
 void main() {
   runApp(const MyApp());
 }
@@ -14,7 +16,20 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Foocafe Flutter workshop',
       theme: ThemeData(
-        primarySwatch: Colors.green,
+        primarySwatch: AppConstants.colorToMaterialColor(
+            AppConstants.hexToColor(AppConstants.APP_PRIMARY_COLOR)),
+        primaryColor: AppConstants.hexToColor(AppConstants.APP_PRIMARY_COLOR),
+        backgroundColor:
+            AppConstants.hexToColor(AppConstants.APP_BACKGROUND_COLOR),
+        primaryColorLight:
+            AppConstants.hexToColor(AppConstants.APP_PRIMARY_COLOR_LIGHT),
+        dividerColor:
+            AppConstants.hexToColor(AppConstants.APP_BACKGROUND_COLOR_GRAY),
+        textTheme: TextTheme(
+          caption: TextStyle(
+              color: AppConstants.hexToColor(
+                  AppConstants.APP_PRIMARY_FONT_COLOR_WHITE)),
+        ),
       ),
       home: const MyHomePage(title: 'Foocafe Flutter workshops'),
     );
