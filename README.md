@@ -5,8 +5,8 @@ Initial Code for Foocafe workshop
 ## Step 1 Starting Point
 
 ```powershell
-flutter create food_delivery
-cd food_delivery
+flutter create flutterworkshop
+cd flutterworkshop
 flutter run
 cd .\lib\
 md helpers
