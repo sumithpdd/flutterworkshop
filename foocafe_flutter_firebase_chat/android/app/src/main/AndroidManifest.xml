@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.food_delivery">
+    package="com.example.foocafe_flutter_firebase_chat">
    <application
-        android:label="food_delivery"
+        android:label="foocafe_flutter_firebase_chat"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
