@@ -1,13 +1,15 @@
 # flutterworkshop
 
-Initial Code for Foocafe workshop
+Initial Code for Foocafe Flutter Firebase Chat workshop
 
 ## Step 1 Starting Point
+Already done in this repo 
 
 ```powershell
-flutter create flutterworkshop
-cd flutterworkshop
+flutter create foocafe_flutter_firebase_chat
+cd foocafe_flutter_firebase_chat
 flutter run
+
 cd .\lib\
 md helpers
 md models
