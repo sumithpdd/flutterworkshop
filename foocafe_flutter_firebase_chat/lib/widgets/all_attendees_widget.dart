@@ -32,7 +32,7 @@ class AllAttendees extends StatelessWidget {
                   MaterialPageRoute(
                     builder: (_) => ChatScreen(
                       currentUserId: currentUserId,
-                      toUserId: user.id,
+                      toUser: user,
                     ),
                   ),
                 ),

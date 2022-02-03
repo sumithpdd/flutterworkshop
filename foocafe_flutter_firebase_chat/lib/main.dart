@@ -9,6 +9,7 @@ import 'models/user_data.dart';
 import 'screens/attendees_screen.dart';
 import 'services/auth_service.dart';
 import 'services/database_service.dart';
+import 'services/storage_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -24,6 +25,9 @@ void main() async {
         ),
         Provider<DatabaseService>(
           create: (_) => DatabaseService(),
+        ),
+        Provider<StorageService>(
+          create: (_) => StorageService(),
         ),
       ],
       child: const MyApp(),

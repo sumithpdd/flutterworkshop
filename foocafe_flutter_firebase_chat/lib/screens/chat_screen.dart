@@ -1,20 +1,26 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'dart:io';
+
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:foocafe_flutter_firebase_chat/data/data.dart';
 import 'package:foocafe_flutter_firebase_chat/helpers/app_constants.dart';
 import 'package:foocafe_flutter_firebase_chat/helpers/constants.dart';
+import 'package:foocafe_flutter_firebase_chat/models/app_user.dart';
 import 'package:foocafe_flutter_firebase_chat/models/message.dart';
 import 'package:flutter/material.dart';
 import 'package:foocafe_flutter_firebase_chat/services/database_service.dart';
+import 'package:foocafe_flutter_firebase_chat/services/storage_service.dart';
+import 'package:foocafe_flutter_firebase_chat/widgets/user_profile_image.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
 class ChatScreen extends StatefulWidget {
   final String? currentUserId;
+  final AppUser toUser;
 
-  final String? toUserId;
-
-  const ChatScreen({this.currentUserId, this.toUserId, Key? key})
+  const ChatScreen({this.currentUserId, required this.toUser, Key? key})
       : super(key: key);
 
   @override
@@ -37,7 +43,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
   _setupMessages() async {
     List<Message> messages = await _dataBaseService.getChatMessages(
-        widget.currentUserId!, widget.toUserId!);
+        widget.currentUserId!, widget.toUser.id!);
     setState(() {
       _messages = messages;
     });
@@ -79,14 +85,10 @@ class _ChatScreenState extends State<ChatScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Text(
-              message.text!,
-              style: TextStyle(
-                color: isMe ? Colors.white60 : Colors.blueGrey,
-                fontSize: 12.0,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
+            message.imageUrl == null
+                ? _buildText(isMe, message)
+                : _buildImage(context, message),
+            const SizedBox(height: 8.0),
             SizedBox(height: 8.0),
             Row(
               mainAxisAlignment:
@@ -116,6 +118,33 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 
+  _buildText(bool isMe, Message message) {
+    return Text(
+      message.text!,
+      style: TextStyle(
+        color: isMe
+            ? AppConstants.hexToColor(AppConstants.APP_PRIMARY_COLOR_BLACK)
+            : AppConstants.hexToColor(AppConstants.APP_BACKGROUND_COLOR_GRAY),
+        fontSize: 15.0,
+        fontWeight: FontWeight.w600,
+      ),
+    );
+  }
+
+  _buildImage(BuildContext context, Message message) {
+    final size = MediaQuery.of(context).size;
+    return Container(
+      height: size.height * 0.2,
+      width: size.width * 0.6,
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20.0),
+          image: DecorationImage(
+            fit: BoxFit.cover,
+            image: CachedNetworkImageProvider(message.imageUrl!),
+          )),
+    );
+  }
+
   _buildMessageComposer() {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -124,7 +153,17 @@ class _ChatScreenState extends State<ChatScreen> {
       child: Row(
         children: <Widget>[
           RawMaterialButton(
-            onPressed: () {},
+            onPressed: () async {
+              XFile? imageFile = await ImagePicker().pickImage(
+                source: ImageSource.gallery,
+              );
+              if (imageFile != null) {
+                String imageUrl =
+                    await Provider.of<StorageService>(context, listen: false)
+                        .uploadMessageImage(File(imageFile.path));
+                _handleSubmitted(null, imageUrl);
+              }
+            },
             child: Icon(
               Icons.camera_alt,
               color: AppConstants.hexToColor(
@@ -165,7 +204,7 @@ class _ChatScreenState extends State<ChatScreen> {
             color:
                 AppConstants.hexToColor(AppConstants.APP_PRIMARY_COLOR_ACTION),
             onPressed: _isComposing
-                ? () => _handleSubmitted(_textMessageController.text)
+                ? () => _handleSubmitted(_textMessageController.text, null)
                 : null,
           ),
         ],
@@ -173,33 +212,54 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 
-  void _handleSubmitted(String text) {
-    _textMessageController.clear();
+  void _handleSubmitted(String? text, String? imageUrl) {
+    if ((text != null && text.trim().isNotEmpty) || imageUrl != null) {
+      if (imageUrl == null) {
+        //text message
 
-    setState(() {
-      _isComposing = false;
-    });
+        setState(() {
+          _isComposing = false;
+        });
+      }
+      Message message = Message(
+        senderId: widget.currentUserId,
+        toUserId: widget.toUser.id,
+        imageUrl: imageUrl,
+        timestamp: Timestamp.fromDate(DateTime.now()),
+        text: text,
+        isLiked: true,
+        unread: true,
+      );
+      setState(() {
+        _messages.insert(0, message);
+      });
+      _dataBaseService.sendChatMessage(message);
+    }
+  }
 
-    Message message = Message(
-      senderId: widget.currentUserId,
-      toUserId: widget.toUserId,
-      timestamp: Timestamp.fromDate(DateTime.now()),
-      text: text,
-      isLiked: true,
-      unread: true,
+  AppBar _appbar() {
+    return AppBar(
+      title: Row(
+        children: <Widget>[
+          profileImage(widget.toUser, avatarRadius: 25),
+          SizedBox(width: 10.0),
+          Text(
+            widget.toUser.name!,
+            style: TextStyle(
+              fontSize: 18.0,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
+      ),
+      elevation: 10.0,
     );
-
-    setState(() {
-      _messages.insert(0, message);
-    });
-
-    _dataBaseService.sendChatMessage(message);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Chats")),
+      appBar: _appbar(),
       body: GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),
         child: Column(
