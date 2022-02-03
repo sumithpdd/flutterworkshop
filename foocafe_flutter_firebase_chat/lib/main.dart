@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:foocafe_flutter_firebase_chat/screens/chat_screen.dart';
 import 'package:foocafe_flutter_firebase_chat/screens/login_screen.dart';
 import 'helpers/app_constants.dart';
 
@@ -34,7 +35,7 @@ class MyApp extends StatelessWidget {
                   AppConstants.APP_PRIMARY_FONT_COLOR_WHITE)),
         ),
       ),
-      home: const LoginScreen(),
+      home: const ChatScreen(),
     );
   }
 }
