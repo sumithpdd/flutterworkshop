@@ -3,6 +3,7 @@ import 'package:foocafe_flutter_firebase_chat/models/app_user.dart';
 import 'package:foocafe_flutter_firebase_chat/models/user_data.dart';
 import 'package:foocafe_flutter_firebase_chat/screens/chat_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:foocafe_flutter_firebase_chat/widgets/user_profile_image.dart';
 import 'package:provider/provider.dart';
 
 class AllAttendees extends StatelessWidget {
@@ -51,6 +52,7 @@ class AllAttendees extends StatelessWidget {
                     children: <Widget>[
                       Row(
                         children: <Widget>[
+                          profileImage(user, avatarRadius: 20),
                           const SizedBox(width: 10.0),
                           Center(
                             child: Column(
