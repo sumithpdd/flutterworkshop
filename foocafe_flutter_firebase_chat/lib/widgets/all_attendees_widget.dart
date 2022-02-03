@@ -11,8 +11,8 @@ class AllAttendees extends StatelessWidget {
   const AllAttendees({required this.appUsers, Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    String? currentUserId =
-        Provider.of<UserData>(context, listen: false).currentUserId;
+    String currentUserId =
+        Provider.of<UserData>(context, listen: false).currentUserId!;
 
     return Expanded(
       child: Container(
@@ -31,9 +31,9 @@ class AllAttendees extends StatelessWidget {
                   context,
                   MaterialPageRoute(
                     builder: (_) => ChatScreen(
-                        // currentUserId: currentUserId!,
-                        // toUser: user,
-                        ),
+                      currentUserId: currentUserId,
+                      toUserId: user.id,
+                    ),
                   ),
                 ),
                 child: Container(

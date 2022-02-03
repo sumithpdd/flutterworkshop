@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:foocafe_flutter_firebase_chat/helpers/constants.dart';
 import 'package:foocafe_flutter_firebase_chat/models/app_user.dart';
+import 'package:foocafe_flutter_firebase_chat/models/message.dart';
 
 class DatabaseService {
   Future<AppUser> getUser(String userId) async {
@@ -36,6 +37,50 @@ class DatabaseService {
       'name': user.name,
       'profileImageUrl': user.profileImageUrl,
       'bio': user.bio,
+    });
+  }
+
+  Future<List<Message>> getChatMessages(
+      String senderId, String receiverId) async {
+    List<Message> messages = [];
+    QuerySnapshot messagesSenderQuerySnapshot = await chatsRef
+        .where('senderId', isEqualTo: senderId)
+        .where('toUserId', isEqualTo: receiverId)
+        .orderBy('timestamp', descending: true)
+        .get();
+
+    for (var doc in messagesSenderQuerySnapshot.docs) {
+      // ignore: avoid_print
+      print(doc.id);
+      messages.add(Message.fromDoc(doc));
+    }
+    QuerySnapshot messagestoQuerySnapshot = await chatsRef
+        .where('senderId', isEqualTo: receiverId)
+        .where('toUserId', isEqualTo: senderId)
+        .orderBy('timestamp', descending: true)
+        .get();
+
+    for (var doc in messagestoQuerySnapshot.docs) {
+      // ignore: avoid_print
+      print(doc.id);
+      messages.add(Message.fromDoc(doc));
+    }
+
+    Comparator<Message> timestampComparator =
+        (a, b) => b.timestamp!.compareTo(a.timestamp!);
+    messages.sort(timestampComparator);
+    return messages;
+  }
+
+  void sendChatMessage(Message message) {
+    chatsRef.add({
+      'senderId': message.senderId,
+      'toUserId': message.toUserId,
+      'text': message.text,
+      'imageUrl': message.imageUrl,
+      'isLiked': message.isLiked,
+      'unread': message.unread,
+      'timestamp': Timestamp.fromDate(DateTime.now()),
     });
   }
 }

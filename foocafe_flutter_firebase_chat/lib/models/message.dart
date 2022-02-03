@@ -4,7 +4,7 @@ class Message {
   final String? id, senderId, toUserId, text, imageUrl;
   final bool? isLiked;
   final bool? unread;
-  final String? timestamp;
+  final Timestamp? timestamp;
 
   Message({
     this.id,
