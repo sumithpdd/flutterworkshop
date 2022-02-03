@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:foocafe_flutter_firebase_chat/helpers/app_constants.dart';
 import 'package:foocafe_flutter_firebase_chat/models/app_user.dart';
 import 'package:foocafe_flutter_firebase_chat/models/user_data.dart';
+import 'package:foocafe_flutter_firebase_chat/screens/edit_profile_screen.dart';
 import 'package:foocafe_flutter_firebase_chat/services/database_service.dart';
 import 'package:provider/provider.dart';
 
@@ -46,15 +47,14 @@ class _AppDrawerState extends State<AppDrawer> {
                 IconButton(
                   icon: const Icon(Icons.edit),
                   tooltip: 'Edit Profile',
-                  onPressed: () {},
-                  // onPressed: () => Navigator.push(
-                  //   context,
-                  //   MaterialPageRoute(
-                  //     builder: (_) => EditProfileScreen(
-                  //       user: user,
-                  //     ),
-                  //   ),
-                  // ),
+                  onPressed: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => EditProfileScreen(
+                        user: user,
+                      ),
+                    ),
+                  ),
                   color:
                       AppConstants.hexToColor(AppConstants.APP_PRIMARY_COLOR),
                 ),

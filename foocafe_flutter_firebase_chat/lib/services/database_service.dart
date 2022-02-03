@@ -30,4 +30,12 @@ class DatabaseService {
     }
     return users;
   }
+
+  static void updateUser(AppUser user) {
+    usersRef.doc(user.id).update({
+      'name': user.name,
+      'profileImageUrl': user.profileImageUrl,
+      'bio': user.bio,
+    });
+  }
 }
