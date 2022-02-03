@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.foocafe_flutter_firebase_chat">
+    package="com.foocafe.flutterfirebasechat">
    <application
         android:label="foocafe_flutter_firebase_chat"
         android:name="${applicationName}"
